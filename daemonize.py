@@ -18,11 +18,16 @@ import tempfile
 
 class Daemonize(object):
     """Do Unix two fork to make your program daemonize"""
-    def __init__(self, pidfile = None):
-        self.pidfile = pidfile or os.path.join(tempfile.gettempdir(),
-                                               '%s.pid' % __file__.rstrip('.py')
-                                               )
-        
+    def __init__(self, filename=None, pidfile=None):
+        if not pidfile:
+            if not filename:
+                pidfile = tempfile.mktemp(prefix=__name__, suffix='.pid')
+            else:
+                filename = os.path.basename(filename)
+                filename = os.path.splitext(filename)[0]
+                pidfile = os.path.join(tempfile.gettempdir(), '%s.pid'%filename)
+
+        self.pidfile = pidfile
         self.stdin = self.stdout = self.stderr = getattr(os, 'devnull', '/dev/null')
         
         
@@ -33,7 +38,7 @@ class Daemonize(object):
                 # this parent, then exit
                 sys.exit(0)
         except Exception, e:
-            sys.stderr.write("fork 1 failed, %s\n" % e.strerror)
+            sys.stderr.write("fork 1 failed, %s\n" % e)
             sys.exit(1)
             
         # this is the first forked child process
@@ -47,7 +52,7 @@ class Daemonize(object):
             if pid > 0:
                 sys.exit(0)
         except Exception, e:
-            sys.stderr.write("from 2 failed, %s\n" % e.strerror)
+            sys.stderr.write("from 2 failed, %s\n" % e)
             sys.exit(2)
             
         # this is the second forded process
@@ -67,11 +72,14 @@ class Daemonize(object):
             f.write('%d\n' % os.getpid())
             
             
-    def __call__(self, func):
+    def __call__(self, func=None):
+        if not func:
+            self._daemon_fork()
+            return
+
         def wrap(*args, **kwargs):
             self._daemon_fork()
-            res = func(*args, **kwargs)
-            return res
+            return func(*args, **kwargs)
         return wrap
             
 
