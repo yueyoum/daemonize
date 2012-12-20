@@ -10,28 +10,38 @@ def my_func():
     pass
     
 my_func()
+
+or
+
+d = Daemonize()
+d.stdout = '/tmp/d_out'   # MUST BE ABSOLUTE PATH
+d.stderr = '/tmp/d_err'
+d.make_daemon()  # or d()
 """
 
 import os
 import sys
-import tempfile
+
+
+__version__ = '0.1'
+__all__ = ['Daemonize']
+
 
 class Daemonize(object):
     """Do Unix two fork to make your program daemonize"""
-    def __init__(self, filename=None, pidfile=None):
-        if not pidfile:
-            if not filename:
-                pidfile = tempfile.mktemp(prefix=__name__, suffix='.pid')
-            else:
-                filename = os.path.basename(filename)
-                filename = os.path.splitext(filename)[0]
-                pidfile = os.path.join(tempfile.gettempdir(), '%s.pid'%filename)
+    def __init__(self, pidfile=None, stdin=None, stdout=None, stderr=None):
+        if pidfile:
+            # test pidfile is writeable
+            open(pidfile, 'w').close()
 
         self.pidfile = pidfile
-        self.stdin = self.stdout = self.stderr = getattr(os, 'devnull', '/dev/null')
+
+        dev_null = getattr(os, 'devnull', '/dev/null')
+        self.stdin = stdin or dev_null
+        self.stdout = stdout or dev_null
+        self.stderr = stdout or dev_null
         
-        
-    def _daemon_fork(self):
+    def make_daemon(self):
         try:
             pid = os.fork()
             if pid > 0:
@@ -68,17 +78,18 @@ class Daemonize(object):
         os.dup2(stdout.fileno(), sys.stdout.fileno())
         os.dup2(stderr.fileno(), sys.stderr.fileno())
         
-        with open(self.pidfile, 'w') as f:
-            f.write('%d\n' % os.getpid())
+        if self.pidfile:
+            with open(self.pidfile, 'w') as f:
+                f.write('%d\n' % os.getpid())
             
             
     def __call__(self, func=None):
         if not func:
-            self._daemon_fork()
+            self.make_daemon()
             return
 
         def wrap(*args, **kwargs):
-            self._daemon_fork()
+            self.make_daemon()
             return func(*args, **kwargs)
         return wrap
             
@@ -91,9 +102,11 @@ if __name__ == '__main__':
         
     t = T()
     
-    @Daemonize()
+    d = Daemonize()
+    d.stdout = '/tmp/t_name'
+
+    @d
     def run():
-        with open('/tmp/t_name', 'w') as f:
-            f.write('%s\n' % t.get_name())
+        print t.get_name()
             
     run()
