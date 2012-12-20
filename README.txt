@@ -1,4 +1,4 @@
-# A Simple Class to make your program daemonize
+# A Simple Class to make your program daemonize in Unix-like system
 
 
 Usage:
