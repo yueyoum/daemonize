@@ -3,7 +3,7 @@
 
 Usage:
 
-    from daemonize import Daemonize
+    from daemonized import Daemonize
 
     @Daemonize()
     def my_func():

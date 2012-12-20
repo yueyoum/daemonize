@@ -3,7 +3,7 @@
 """
 Usage:
 
-from daemonize import Daemonize
+from daemonized import Daemonize
 
 @Daemonize()
 def my_func():
@@ -23,7 +23,7 @@ import os
 import sys
 
 
-__version__ = '0.1'
+__version__ = '0.2.1'
 __all__ = ['Daemonize']
 
 
@@ -94,19 +94,3 @@ class Daemonize(object):
         return wrap
             
 
-
-if __name__ == '__main__':
-    class T(object):
-        def get_name(self):
-            return 'NAME'
-        
-    t = T()
-    
-    d = Daemonize()
-    d.stdout = '/tmp/t_name'
-
-    @d
-    def run():
-        print t.get_name()
-            
-    run()

@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name = 'daemonized',
-    version = '0.2',
+    version = '0.2.1',
     py_modules = ['daemonize'],
     author = 'Wang Chao',
     author_email = 'yueyoum@gmail.com',
