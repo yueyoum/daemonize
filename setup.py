@@ -2,8 +2,8 @@ from distutils.core import setup
 
 setup(
     name = 'daemonized',
-    version = '0.2.1',
-    py_modules = ['daemonize'],
+    version = '0.2.2',
+    py_modules = ['daemonized'],
     author = 'Wang Chao',
     author_email = 'yueyoum@gmail.com',
     url = 'https://github.com/yueyoum/daemonize',
