@@ -13,7 +13,7 @@ Usage:
     my_func()
 
     # or, this
-    d = @Daemonize()
+    d = Daemonize()
     d.stdout = '/tmp/d_out'  # MUST BE ABSOLUTE PATH
     d.stderr = '/tmp/d_err'
 
@@ -22,3 +22,4 @@ Usage:
 
     d.make_daemon()
     my_func()
+

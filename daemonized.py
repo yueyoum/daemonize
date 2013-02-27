@@ -39,7 +39,7 @@ class Daemonize(object):
         dev_null = getattr(os, 'devnull', '/dev/null')
         self.stdin = stdin or dev_null
         self.stdout = stdout or dev_null
-        self.stderr = stdout or dev_null
+        self.stderr = stderr or dev_null
         
     def make_daemon(self):
         try:
@@ -49,7 +49,7 @@ class Daemonize(object):
                 sys.exit(0)
         except Exception, e:
             sys.stderr.write("fork 1 failed, %s\n" % e)
-            sys.exit(1)
+            raise
             
         # this is the first forked child process
         # separate from parent's environment
@@ -62,8 +62,8 @@ class Daemonize(object):
             if pid > 0:
                 sys.exit(0)
         except Exception, e:
-            sys.stderr.write("from 2 failed, %s\n" % e)
-            sys.exit(2)
+            sys.stderr.write("fork 2 failed, %s\n" % e)
+            raise
             
         # this is the second forded process
         # set fd
