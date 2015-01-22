@@ -1,10 +1,10 @@
 from distutils.core import setup
 
-VERSION = '0.2.4'
+import daemonized
 
 setup(
     name = 'daemonized',
-    version = VERSION,
+    version = daemonized.VERSION,
     py_modules = ['daemonized'],
     author = 'Wang Chao',
     author_email = 'yueyoum@gmail.com',
